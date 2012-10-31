@@ -1,0 +1,212 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Administration &mdash; Bacula 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bacula 1 documentation" href="index.html" />
+    <link rel="prev" title="Director configuration (/usr/local/etc/bacula-dir.conf)" href="configuration.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Director configuration (/usr/local/etc/bacula-dir.conf)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bacula 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="administration">
+<h1>Administration<a class="headerlink" href="#administration" title="Permalink to this headline">¶</a></h1>
+<p>When configuration of services is done it is advised to check if everything works as intended.</p>
+<p>Starting services:</p>
+<div class="highlight-python"><pre>$ /usr/local/etc/rc.d/bacula-dir start
+$ /usr/local/etc/rc.d/bacula-sd start</pre>
+</div>
+<p>On Client:</p>
+<div class="highlight-python"><pre>$ /usr/local/etc/rc.d/bacula-fd start</pre>
+</div>
+<p>Now we need to see if everything is running fine. On server and client:</p>
+<div class="highlight-python"><pre>$ ps auwx | grep bacula</pre>
+</div>
+<p>If output suggests that Bacula&#8217;s services are up and running we should check if they are listening on configured ports. Curently configured IP&#8217;s are 192.168.154.129 for server and 192.168.154.129 for client.</p>
+<p>On server:</p>
+<div class="highlight-python"><pre>$ netstat -an | grep '192.168.154.128'</pre>
+</div>
+<p>On client</p>
+<div class="highlight-python"><pre>$ netstat -an | grep '192.168.154.129'</pre>
+</div>
+<p>When output says that services listen on configured tcp ports we are good to do backups.</p>
+<div class="section" id="console-program">
+<h2>Console program<a class="headerlink" href="#console-program" title="Permalink to this headline">¶</a></h2>
+<p>To start console program on client, type:</p>
+<div class="highlight-python"><pre>$ bconsole</pre>
+</div>
+<p>Console is configured to contact the Director configured in bconsole.conf. From this point user or administrator is able to manage Bacula.</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>* &lt;command&gt; &lt;keyword1&gt;[=&lt;argument1&gt;]</pre>
+</div>
+<p>For example:</p>
+<div class="highlight-python"><pre>* list files jobid=2</pre>
+</div>
+<p>This will display all files saved for jobid 2.</p>
+</div>
+<div class="section" id="running-a-job">
+<h2>Running a Job<a class="headerlink" href="#running-a-job" title="Permalink to this headline">¶</a></h2>
+<p>To run a Job you need to type run &lt;return&gt;</p>
+<div class="highlight-python"><pre>* run &lt;return&gt;
+Automatically selected Catalog: BaculaCatalog
+Using Catalog "BaculaCatalog"
+A job name must be specified.
+The defined Job resources are:
+    1: Test
+    2: Backup Catalog
+    3: RestoreFiles
+
+Select Job resource (1-3):</pre>
+</div>
+<p>As you cam see Bacula already knows, that we have only one Catalog defind so it picks it up automiatically. It also read all defined jobs from <em>bacula-dir.conf</em></p>
+<p>Lets say we want to run Job Test (1):</p>
+<div class="highlight-python"><pre>Select Job resource (1-3): 1 &lt;return&gt;
+Run Backup job
+JobName:  Test
+Level:    Full
+Client:   vm-bsd-client-fd
+FileSet:  Full Set
+Pool:     File (From Job resource)
+Storage:  HDD (From Job resource)
+When:     2012-10-31 14:09:44
+Priority: 10
+OK to run? (yes/no/mod):</pre>
+</div>
+<p>Output is informing user what Bacula is going to do. Job Test was previusly defined in Director (bacula-dir.conf). Console gives a choice to run this job, to not run this job or to modify it.</p>
+<p>If you type &#8216;mod&#8217; it will show you parameters which you can modify.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Level</li>
+<li>Storage</li>
+<li>Job</li>
+<li>FileSet</li>
+<li>Client</li>
+<li>When</li>
+<li>Priority</li>
+<li>Pool</li>
+<li>Plugin Options</li>
+</ul>
+</div></blockquote>
+<p>After finishing you can simply run this and check the results how it went.</p>
+<div class="highlight-python"><pre>* status &lt;return&gt;
+Status available for:
+    1: Director
+    2: Storage
+    3: Client
+    4: All
+Select daemon type for status (1-4):</pre>
+</div>
+<p>Lets ask Director how our job went:</p>
+<div class="highlight-python"><pre>Select daemon type for status (1-4): 1
+
+Running Jobs:
+Console connected at 31-oct-12 14:02
+No Jobs running.
+====
+
+Terminated Jobs:
+ JobId   Level     Files      Bytes   Status   Finished          Name
+========================================================================
+     1   Full           3    208.6 K  OK       31-oct-12 14:380  Test
+
+====</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Administration</a><ul>
+<li><a class="reference internal" href="#console-program">Console program</a></li>
+<li><a class="reference internal" href="#running-a-job">Running a Job</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="configuration.html"
+                        title="previous chapter">Director configuration (/usr/local/etc/bacula-dir.conf)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/administration.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Director configuration (/usr/local/etc/bacula-dir.conf)"
+             >previous</a> |</li>
+        <li><a href="index.html">Bacula 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Michal Wlodarczyk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

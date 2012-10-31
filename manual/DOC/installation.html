@@ -1,0 +1,194 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation of Bacula server &mdash; Bacula 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bacula 1 documentation" href="index.html" />
+    <link rel="next" title="Configuration files" href="configuration.html" />
+    <link rel="prev" title="Welcome to Bacula’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration files"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Bacula’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bacula 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation-of-bacula-server">
+<h1>Installation of Bacula server<a class="headerlink" href="#installation-of-bacula-server" title="Permalink to this headline">¶</a></h1>
+<p>What is needed to install Bacula on FreeBSD system:</p>
+<blockquote>
+<div><ul class="simple">
+<li>FreeBSD 8.x or 9.x (optionally with ports collection) installed on physical or virtual machine,</li>
+<li>Root provliges to make changes in system files,</li>
+<li>MySQL 5.x (prefered), SQLite or PostGRE SQL database.</li>
+</ul>
+</div></blockquote>
+<p>There are two ways to install Bacula on FreeBSD:</p>
+<blockquote>
+<div><ul class="simple">
+<li>using ports collection,</li>
+<li>compiling from source.</li>
+</ul>
+</div></blockquote>
+<p>As we want it to be as simple as it can we will install it using ports</p>
+<div class="highlight-python"><pre>$ cd /usr/ports/sysutils/bacula-server
+$ make install</pre>
+</div>
+<p>When Bacula installer asks for prefered database we select MySQL (which is already installed).</p>
+<p>After installer finishes his job we need to create database for Bacula, make tables and grant privliges to bacula user.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This step might be slightly different depending on bacula version. I recommend using TAB key to automatically fill version number.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If there is root password set for MySQL you need to put <em>-p</em> to the following commands and you will be prompted for password.</p>
+</div>
+<div class="highlight-python"><pre>$ cd /usr/ports/sysutils/bacula-server/work/bacula-5.0.3/src/cats
+$ ./grant_mysql_privileges
+$ ./create_mysql_database
+$ ./make_mysql_tables</pre>
+</div>
+<div class="section" id="running-bacula">
+<h2>Running Bacula<a class="headerlink" href="#running-bacula" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Before running Bacula we should configure it first, however we will execute first run at this point to check if everything goes smooth.</p>
+</div>
+<p>Editing rc.conf (you may use any text editor you want like vim or ee)</p>
+<div class="highlight-python"><pre>$ ee /etc/rc.conf</pre>
+</div>
+<p>At the end of file we put:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">bacula_dir_enable</span><span class="o">=</span><span class="s">&quot;YES&quot;</span>
+<span class="n">bacula_sd_enable</span><span class="o">=</span><span class="s">&quot;YES&quot;</span>
+<span class="n">bacula_fd_enable</span><span class="o">=</span><span class="s">&quot;YES&quot;</span>
+</pre></div>
+</div>
+<p>This will make Bacula start at system boot. To manually start services type:</p>
+<div class="highlight-python"><pre>$ /usr/local/etc/rc.d/bacula-dir start
+$ /usr/local/etc/rc.d/bacula-sd start</pre>
+</div>
+<p>Check if the processes are running:</p>
+<div class="highlight-python"><pre>$ ps auwx | grep bacula</pre>
+</div>
+<p>If output is fine we stop the services and go to configuration files of Bacula.</p>
+<div class="highlight-python"><pre>$ /usr/local/etc/rc.d/bacula-dir stop
+$ /usr/local/etc/rc.d/bacula-sd stop</pre>
+</div>
+</div>
+</div>
+<div class="section" id="installation-of-bacula-file-daemon-client">
+<h1>Installation of Bacula File Daemon/Client<a class="headerlink" href="#installation-of-bacula-file-daemon-client" title="Permalink to this headline">¶</a></h1>
+<p>The installation of Bacula Client is very similar to server installation.</p>
+<div class="highlight-python"><pre>$ cd /usr/ports/sysutils/bacula-client
+$ make install</pre>
+</div>
+</div>
+<div class="section" id="installation-of-bacula-console">
+<h1>Installation of Bacula Console<a class="headerlink" href="#installation-of-bacula-console" title="Permalink to this headline">¶</a></h1>
+<p>Bacula Console (bconsole) is part of Bacula Daemon and it installs with it.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation of Bacula server</a><ul>
+<li><a class="reference internal" href="#running-bacula">Running Bacula</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation-of-bacula-file-daemon-client">Installation of Bacula File Daemon/Client</a></li>
+<li><a class="reference internal" href="#installation-of-bacula-console">Installation of Bacula Console</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Bacula&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="configuration.html"
+                        title="next chapter">Configuration files</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/installation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration files"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Bacula’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Bacula 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Michal Wlodarczyk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

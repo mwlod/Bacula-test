@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuration files &mdash; Bacula 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Bacula 1 documentation" href="index.html" />
+    <link rel="next" title="Administration" href="administration.html" />
+    <link rel="prev" title="Installation of Bacula server" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="administration.html" title="Administration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation of Bacula server"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Bacula 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configuration-files">
+<h1>Configuration files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h1>
+<p>There are configuration files attached which can be copied to</p>
+<div class="highlight-python"><pre>$ /usr/local/etc/</pre>
+</div>
+<p>In those files are initial configurations of server (bacula-dir.conf and bacula-sd.conf) and client (bacula-fd.conf and bconsole.conf).</p>
+</div>
+<div class="section" id="director-configuration-usr-local-etc-bacula-dir-conf">
+<h1>Director configuration (/usr/local/etc/bacula-dir.conf)<a class="headerlink" href="#director-configuration-usr-local-etc-bacula-dir-conf" title="Permalink to this headline">¶</a></h1>
+<p>Director is largest configuration file of Bacula. It defines Clients, Jobs, FileSets, Storage, Devices, Schedules, Pools and Messages.</p>
+<div class="section" id="director">
+<h2>Director<a class="headerlink" href="#director" title="Permalink to this headline">¶</a></h2>
+<p>Defines director itself. No need to change this section.</p>
+<div class="highlight-python"><pre>Director {          # define myself
+Name = vm-bsd-test-dir        # name of director (used in bacula-fd.conf and bconsole.conf)
+DIR Address = 192.168.154.128 # IP address of server
+DIRport = 9101                # where we listen for UA connections
+QueryFile = "/usr/local/share/bacula/query.sql"    #location of file where bacula puts DB queries
+WorkingDirectory = "/var/db/bacula"
+PidDirectory = "/var/run"
+Maximum Concurrent Jobs = 1   # max number of jobs performed at the same time
+Password = "dupadupa"         # Console password
+Messages = Daemon
+}</pre>
+</div>
+</div>
+<div class="section" id="job">
+<h2>Job<a class="headerlink" href="#job" title="Permalink to this headline">¶</a></h2>
+<p>Defines Bacula tasks like backup, restore or verification. It uses Client, Pool, Schedule, Messages and FileSet resources. You can add as many Jobs as you like.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If Job don&#8217;t have Schedule directive defined you will only be able to run it manually.</p>
+</div>
+</div>
+<div class="section" id="jobdefs">
+<h2>JobDefs<a class="headerlink" href="#jobdefs" title="Permalink to this headline">¶</a></h2>
+<p>This is optional but useful. JobDefs defines defaults for Jobs. That means you don&#8217;t need to define entirely very similar Jobs.</p>
+</div>
+<div class="section" id="fileset">
+<h2>FileSet<a class="headerlink" href="#fileset" title="Permalink to this headline">¶</a></h2>
+<p>Here you put list of files to backup. You may create as many FileSets as you want.</p>
+</div>
+<div class="section" id="schedule">
+<h2>Schedule<a class="headerlink" href="#schedule" title="Permalink to this headline">¶</a></h2>
+<p>Schedule lets you automate tasks.</p>
+</div>
+<div class="section" id="pool">
+<h2>Pool<a class="headerlink" href="#pool" title="Permalink to this headline">¶</a></h2>
+<p>Pool is used to group volumes which can be assigned to Jobs. For example you may put incremental backups in one pool and full backups in another.</p>
+</div>
+<div class="section" id="storage">
+<h2>Storage<a class="headerlink" href="#storage" title="Permalink to this headline">¶</a></h2>
+<p>Defines devices which will be used be Storage Deamon.</p>
+</div>
+<div class="section" id="client">
+<h2>Client<a class="headerlink" href="#client" title="Permalink to this headline">¶</a></h2>
+<p>Client resource contains information about clients. It is used to authorize each client to contact the Director.</p>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<p>This resource makes reports about events. It can put output to console, log files or e-mail.</p>
+</div>
+<div class="section" id="catalog">
+<h2>Catalog<a class="headerlink" href="#catalog" title="Permalink to this headline">¶</a></h2>
+<p>Catalog contains informations about connection to database. This section do not need to be changed.</p>
+</div>
+</div>
+<div class="section" id="storage-daemon-usr-local-etc-bacula-sd-conf">
+<h1>Storage Daemon (/usr/local/etc/bacula-sd.conf)<a class="headerlink" href="#storage-daemon-usr-local-etc-bacula-sd-conf" title="Permalink to this headline">¶</a></h1>
+<p>Storage Daemon holds information about storage devices. SD can be on a different machine then Director.</p>
+<div class="section" id="id1">
+<h2>Storage<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Here are global parameters used by Storage Daemon.</p>
+</div>
+<div class="section" id="id2">
+<h2>Director<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>It lists Directors which can connect to Storage Daemon.</p>
+</div>
+<div class="section" id="device">
+<h2>Device<a class="headerlink" href="#device" title="Permalink to this headline">¶</a></h2>
+<p>Contains accurate informations about storage devices and how Bacula will use it.</p>
+</div>
+<div class="section" id="id3">
+<h2>Messages<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Information how Director will be reported by Storage Daemon.</p>
+</div>
+</div>
+<div class="section" id="file-daemon-client-usr-local-etc-bacula-fd-conf">
+<h1>File Daemon/Client (/usr/local/etc/bacula-fd.conf)<a class="headerlink" href="#file-daemon-client-usr-local-etc-bacula-fd-conf" title="Permalink to this headline">¶</a></h1>
+<p>Client/File Daemon is used to communicate with Bacula server. The resources are Client, Director and messages.</p>
+<div class="section" id="filedaemon">
+<h2>FileDaemon<a class="headerlink" href="#filedaemon" title="Permalink to this headline">¶</a></h2>
+<p>Defines name, IP address, port, directories and maximum concurrent jobs of Client computer or server.</p>
+</div>
+<div class="section" id="id4">
+<h2>Director<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>To Director (bacula-dir) can communicate with Client it needs authorization which is defined here.</p>
+</div>
+<div class="section" id="id5">
+<h2>Messages<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>Contains information on what reports will be send to Director.</p>
+</div>
+</div>
+<div class="section" id="bacula-console-usr-local-etc-bconsole-conf">
+<h1>Bacula Console (/usr/local/etc/bconsole.conf)<a class="headerlink" href="#bacula-console-usr-local-etc-bconsole-conf" title="Permalink to this headline">¶</a></h1>
+<p>Console is very easy to configure.</p>
+<div class="highlight-python"><pre>Director {
+Name =  #name of Director (configured in bacula-dir.conf)
+Address = #IP address of Client
+DIR Port = 9101
+Password = "" #Director password (configured in bacula-dir.conf)
+}</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Configuration files</a></li>
+<li><a class="reference internal" href="#director-configuration-usr-local-etc-bacula-dir-conf">Director configuration (/usr/local/etc/bacula-dir.conf)</a><ul>
+<li><a class="reference internal" href="#director">Director</a></li>
+<li><a class="reference internal" href="#job">Job</a></li>
+<li><a class="reference internal" href="#jobdefs">JobDefs</a></li>
+<li><a class="reference internal" href="#fileset">FileSet</a></li>
+<li><a class="reference internal" href="#schedule">Schedule</a></li>
+<li><a class="reference internal" href="#pool">Pool</a></li>
+<li><a class="reference internal" href="#storage">Storage</a></li>
+<li><a class="reference internal" href="#client">Client</a></li>
+<li><a class="reference internal" href="#messages">Messages</a></li>
+<li><a class="reference internal" href="#catalog">Catalog</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#storage-daemon-usr-local-etc-bacula-sd-conf">Storage Daemon (/usr/local/etc/bacula-sd.conf)</a><ul>
+<li><a class="reference internal" href="#id1">Storage</a></li>
+<li><a class="reference internal" href="#id2">Director</a></li>
+<li><a class="reference internal" href="#device">Device</a></li>
+<li><a class="reference internal" href="#id3">Messages</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#file-daemon-client-usr-local-etc-bacula-fd-conf">File Daemon/Client (/usr/local/etc/bacula-fd.conf)</a><ul>
+<li><a class="reference internal" href="#filedaemon">FileDaemon</a></li>
+<li><a class="reference internal" href="#id4">Director</a></li>
+<li><a class="reference internal" href="#id5">Messages</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bacula-console-usr-local-etc-bconsole-conf">Bacula Console (/usr/local/etc/bconsole.conf)</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation of Bacula server</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="administration.html"
+                        title="next chapter">Administration</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/configuration.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="administration.html" title="Administration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation of Bacula server"
+             >previous</a> |</li>
+        <li><a href="index.html">Bacula 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Michal Wlodarczyk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
